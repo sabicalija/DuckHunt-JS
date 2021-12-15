@@ -330,10 +330,26 @@ class Game {
 
   afterTrackerInitialized() {
     console.log('SeeSo initialized');
+    this.parseCalibrationData();
   }
 
   afterTrackerFailed() {
     console.log('SeeSo failed');
+  }
+
+  parseCalibrationData() {
+    const href = window.location.href;
+    const decodedURI = decodeURI(href);
+    const queryString = decodedURI.split('?')[1];
+    if (!queryString) {
+      this.isCalibrated = false;
+    } else {
+      const jsonString = queryString.slice('calibrationData='.length, queryString.length);
+      this.eyetracker.setCalibrationData(jsonString);
+      this.isCalibrated = true;
+      this.stage.hud.calibrateLink = 'calibrated (e)';
+      this.stage.hud.calibrateLinkTextBox.style.fill = 'green';
+    }
   }
 
   bindEvents() {
