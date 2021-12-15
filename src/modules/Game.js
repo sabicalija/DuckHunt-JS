@@ -5,7 +5,10 @@ import Stage from './Stage';
 import sound from './Sound';
 import levelCreator from '../libs/levelCreator.js';
 import utils from '../libs/utils';
+import 'regenerator-runtime/runtime';
+import EasySeeSo from 'seeso/easy-seeso.js';
 
+const LICENSE_KEY = 'dev_6nc7urmrn0llf6txsl43ssljykmkvr6463sntyl0';
 const BLUE_SKY_COLOR = 0x64b0ff;
 const PINK_SKY_COLOR = 0xfbb4d4;
 const SUCCESS_RATIO = 0.6;
@@ -39,6 +42,7 @@ class Game {
     this.waveEnding = false;
     this.quackingSoundId = null;
     this.levels = levels.normal;
+    this.eyetracker = new EasySeeSo();
     return this;
   }
 
@@ -261,7 +265,6 @@ class Game {
     this.bindEvents();
     this.startLevel();
     this.animate();
-
   }
 
   addFullscreenLink() {
@@ -311,8 +314,21 @@ class Game {
     this.stage.hud.levelCreatorLink = 'level creator (c)';
   }
 
+  afterTrackerInitialized() {
+    console.log('SeeSo initialized');
+  }
+
+  afterTrackerFailed() {
+    console.log('SeeSo failed');
+  }
+
   bindEvents() {
     window.addEventListener('resize', this.scaleToWindow.bind(this));
+
+    // (async () => {
+    //   await this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this));
+    // })();
+    this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this));
 
     this.stage.mousedown = this.stage.touchstart = this.handleClick.bind(this);
 
