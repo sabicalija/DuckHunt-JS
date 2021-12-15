@@ -9,6 +9,7 @@ import 'regenerator-runtime/runtime';
 import EasySeeSo from 'seeso/easy-seeso.js';
 
 const LICENSE_KEY = 'dev_6nc7urmrn0llf6txsl43ssljykmkvr6463sntyl0';
+const USER_ID = 'user id';
 const BLUE_SKY_COLOR = 0x64b0ff;
 const PINK_SKY_COLOR = 0xfbb4d4;
 const SUCCESS_RATIO = 0.6;
@@ -262,9 +263,22 @@ class Game {
     this.addPauseLink();
     this.addMuteLink();
     this.addFullscreenLink();
+    this.addCalibrateLink();
     this.bindEvents();
     this.startLevel();
     this.animate();
+  }
+
+  addCalibrateLink() {
+    this.stage.hud.createTextBox('calibrateLink', {
+      style: BOTTOM_LINK_STYLE,
+      location: Stage.calibrateLinkBoxLocation(),
+      anchor: {
+        x: 1,
+        y: 1
+      }
+    });
+    this.stage.hud.calibrateLink = 'calibrate (e)';
   }
 
   addFullscreenLink() {
@@ -325,9 +339,6 @@ class Game {
   bindEvents() {
     window.addEventListener('resize', this.scaleToWindow.bind(this));
 
-    // (async () => {
-    //   await this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this));
-    // })();
     this.eyetracker.init(LICENSE_KEY, this.afterTrackerInitialized.bind(this), this.afterTrackerFailed.bind(this));
 
     this.stage.mousedown = this.stage.touchstart = this.handleClick.bind(this);
@@ -349,6 +360,10 @@ class Game {
 
       if (event.key === 'f') {
         this.fullscreen();
+      }
+
+      if (event.key === 'e') {
+        this.calibrate();
       }
     });
 
@@ -372,6 +387,10 @@ class Game {
   fullscreen() {
     this.isFullscreen = !this.isFullscreen;
     utils.toggleFullscreen();
+  }
+
+  calibrate() {
+    EasySeeSo.openCalibrationPage(LICENSE_KEY, USER_ID, window.location.href, 5);
   }
 
   pause() {
@@ -585,6 +604,11 @@ class Game {
 
     if (this.stage.clickedFullscreenLink(clickPoint)) {
       this.fullscreen();
+      return;
+    }
+
+    if (this.stage.clickedCalibrateLink(clickPoint)) {
+      this.calibrate();
       return;
     }
 
