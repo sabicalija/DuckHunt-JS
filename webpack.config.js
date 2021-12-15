@@ -44,7 +44,11 @@ module.exports = {
     contentBase: path.join(__dirname, "dist"),
     compress: true,
     inline: true,
-    port: 8080
+    port: 8080,
+    headers: {
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+    },
   },
   plugins: [
     new HardSourcePlugin({
